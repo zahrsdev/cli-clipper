@@ -19,7 +19,8 @@ export class GitHubAdapter {
   private repo: string;
   private workflowId: string;
 
-  constructor(owner: string, repo: string, workflowId: string, token: string) {
+  constructor(config: { owner: string; repo: string; workflowId: string; token: string }) {
+    const { owner, repo, workflowId, token } = config;
     this.octokit = new Octokit({ auth: token });
     this.owner = owner;
     this.repo = repo;

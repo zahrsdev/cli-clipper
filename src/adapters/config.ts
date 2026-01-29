@@ -1,4 +1,8 @@
+import { config } from 'dotenv';
 import { keyRotation, ServiceName } from './KeyRotation.js';
+
+// Load .env file
+config();
 
 export interface ClipperConfig {
   github: {

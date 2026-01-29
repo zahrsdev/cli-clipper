@@ -22,3 +22,5 @@ export const RemotionVideo: React.FC = () => {
     </>
   );
 };
+
+export default RemotionVideo;

@@ -10,7 +10,8 @@ export class TelegramAdapter {
   private bot: TelegramBot;
   private chatId: string;
 
-  constructor(token: string, chatId: string) {
+  constructor(config: { token: string; chatId: string }) {
+    const { token, chatId } = config;
     this.bot = new TelegramBot(token, { polling: false });
     this.chatId = chatId;
   }

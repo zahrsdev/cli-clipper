@@ -25,17 +25,21 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@octokit/rest": "^22.0.1",
     "chalk": "^5.6.2",
     "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
     "form-data": "^4.0.5",
     "inquirer": "^9.3.8",
-    "ora": "^8.2.0"
+    "node-telegram-bot-api": "^0.67.0",
+    "ora": "^8.2.0",
+    "react": "^18.3.0"
   },
   "devDependencies": {
-    "@octokit/rest": "^22.0.1",
+    "@remotion/core": "^4.0.410",
     "@types/inquirer": "^9.0.9",
     "@types/node": "^20.19.30",
-    "node-telegram-bot-api": "^0.67.0",
+    "@types/react": "^18.3.0",
     "remotion": "^4.0.410",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
