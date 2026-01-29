@@ -1,5 +1,5 @@
 import { Composition } from 'remotion';
-import { ViralShort } from './ViralShort.js';
+import { ViralShort } from './ViralShort';
 
 export const RemotionVideo: React.FC = () => {
   return (
