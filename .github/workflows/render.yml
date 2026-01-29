@@ -4,17 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       youtube_url:
-        description: 'YouTube URL to process'
+        description: YouTube URL to process
         required: true
         type: string
       worker_id:
-        description: 'Unique worker identifier'
+        description: Unique worker identifier
         required: true
         type: string
-
-env:
-  YOUTUBE_URL: ${{ inputs.youtube_url }}
-  WORKER_ID: ${{ inputs.worker_id }}
 
 jobs:
   render:
@@ -74,20 +70,15 @@ jobs:
       - name: Prepare Remotion props
         id: props
         run: |
-          # Create Remotion props from segment data
           SEGMENT=$(cat segments_${{ inputs.worker_id }}.json)
           DURATION=$(echo "$SEGMENT" | jq -r '.end - .start')
           START=$(echo "$SEGMENT" | jq -r '.start')
           END=$(echo "$SEGMENT" | jq -r '.end')
           HEADLINE=$(echo "$SEGMENT" | jq -r '.headline')
-
-          # Calculate frames (30fps)
           FRAMES=$(echo "($END - $START) * 30" | bc)
-          FRAMES=${FRAMES%.*}  # Round to integer
-          # Add buffer frames (3 seconds)
+          FRAMES=${FRAMES%.*}
           FRAMES=$((FRAMES + 90))
 
-          # Create props file for Remotion (use absolute path)
           cat > props_${{ inputs.worker_id }}.json <<EOF
           {
             "videoUrl": "$GITHUB_WORKSPACE/video_${{ inputs.worker_id }}.mp4",
