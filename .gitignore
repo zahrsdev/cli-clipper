@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (SECURITY CRITICAL)
+.env
+.env.*
+
+# API Keys files (SECURITY CRITICAL)
+config/keys/
+*.keys
+keys.txt
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Remotion cache
+.remotion/
+
+# Temporary files
+*.tmp
+segments_*.json
+output_*.mp4
+*.webm
+*.mp4
+*.wav
+*.mp3
+*.jpg
+*.png

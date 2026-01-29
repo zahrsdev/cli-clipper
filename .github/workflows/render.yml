@@ -1,0 +1,109 @@
+name: Clipper Render ${{ inputs.worker_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      youtube_url:
+        description: 'YouTube URL to process'
+        required: true
+        type: string
+      worker_id:
+        description: 'Unique worker identifier'
+        required: true
+        type: string
+
+env:
+  YOUTUBE_URL: ${{ inputs.youtube_url }}
+  WORKER_ID: ${{ inputs.worker_id }}
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v2
+
+      - name: Install yt-dlp
+        run: |
+          curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o yt-dlp
+          chmod +x yt-dlp
+
+      - name: Download YouTube video
+        id: download
+        run: |
+          ./yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]" \
+            --merge-output-format mp4 \
+            -o "video_${{ inputs.worker_id }}.mp4" \
+            "${{ inputs.youtube_url }}"
+
+      - name: Extract audio for transcription
+        run: |
+          ffmpeg -i "video_${{ inputs.worker_id }}.mp4" \
+            -vn -acodec pcm_s16le -ar 16000 -ac 1 \
+            "audio_${{ inputs.worker_id }}.wav"
+
+      - name: Transcribe with Deepgram
+        id: transcribe
+        run: |
+          node scripts/transcribe.js "audio_${{ inputs.worker_id }}.wav" > "transcript_${{ inputs.worker_id }}.json"
+        env:
+          DEEPGRAM_KEY: ${{ secrets.DEEPGRAM_KEY }}
+
+      - name: Analyze viral moments with Gemini
+        id: analyze
+        run: |
+          node scripts/analyze-viral.js "transcript_${{ inputs.worker_id }}.json" > "segments_${{ inputs.worker_id }}.json"
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+
+      - name: Render vertical video with Remotion
+        id: render
+        run: |
+          PROPS=$(cat segments_${{ inputs.worker_id }}.json | jq -c .)
+          npx remotion render src/remotion/index.ts ViralShort \
+            "output_${{ inputs.worker_id }}.mp4" \
+            --props="$PROPS" \
+            --concurrency=8 \
+            --timeout=180 \
+            --pixel-format=yuv420p \
+            --crf=23 \
+            --overwrite
+
+      - name: Send to Telegram
+        id: telegram
+        if: success()
+        run: |
+          node scripts/send-telegram.js "output_${{ inputs.worker_id }}.mp4"
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          node scripts/send-telegram.js "error" || true
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f video_${{ inputs.worker_id }}.* audio_${{ inputs.worker_id }}.*
+          rm -f transcript_${{ inputs.worker_id }}.* segments_${{ inputs.worker_id }}.*
+          rm -f output_${{ inputs.worker_id }}.*
