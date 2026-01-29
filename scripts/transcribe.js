@@ -9,16 +9,13 @@
 
 import fs from 'fs';
 import https from 'https';
+import { keyRotation } from '../src/adapters/KeyRotation.ts';
 
-const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 const DEEPGRAM_URL = 'https://api.deepgram.com/v1/listen?model=nova-2&punctuate=true&paragraphs=true&diarize=false&utterances=false&smart_format=true';
 
 async function transcribe(audioFile, outputFile) {
-  // Validate inputs
-  if (!DEEPGRAM_API_KEY) {
-    console.error('❌ DEEPGRAM_API_KEY environment variable is required');
-    process.exit(1);
-  }
+  // Get rotated key with fallback to environment variable
+  const DEEPGRAM_API_KEY = keyRotation.getNextKey('deepgram');
 
   if (!fs.existsSync(audioFile)) {
     console.error(`❌ Audio file not found: ${audioFile}`);

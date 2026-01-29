@@ -7,19 +7,16 @@
  */
 
 import fs from 'fs';
+import { keyRotation } from '../src/adapters/KeyRotation.ts';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
 
 /**
  * Analyze transcript for viral potential using Gemini AI.
  */
 async function analyzeViral(transcriptFile, outputFile) {
-  // Validate inputs
-  if (!GEMINI_API_KEY) {
-    console.error('❌ GEMINI_API_KEY environment variable is required');
-    process.exit(1);
-  }
+  // Get rotated key with fallback to environment variable
+  const GEMINI_API_KEY = keyRotation.getNextKey('gemini');
 
   if (!fs.existsSync(transcriptFile)) {
     console.error(`❌ Transcript file not found: ${transcriptFile}`);
