@@ -71,13 +71,42 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+      - name: Prepare Remotion props
+        id: props
+        run: |
+          # Create Remotion props from segment data
+          SEGMENT=$(cat segments_${{ inputs.worker_id }}.json)
+          DURATION=$(echo "$SEGMENT" | jq -r '.end - .start')
+          START=$(echo "$SEGMENT" | jq -r '.start')
+          END=$(echo "$SEGMENT" | jq -r '.end')
+          HEADLINE=$(echo "$SEGMENT" | jq -r '.headline')
+
+          # Calculate frames (30fps)
+          FRAMES=$(echo "($END - $START) * 30" | bc)
+          FRAMES=${FRAMES%.*}  # Round to integer
+          # Add buffer frames (3 seconds)
+          FRAMES=$((FRAMES + 90))
+
+          # Create props file for Remotion (use absolute path)
+          cat > props_${{ inputs.worker_id }}.json <<EOF
+          {
+            "videoUrl": "$GITHUB_WORKSPACE/video_${{ inputs.worker_id }}.mp4",
+            "start": $START,
+            "end": $END,
+            "transcript": $(echo "$SEGMENT" | jq -c '.transcript'),
+            "headline": "$HEADLINE"
+          }
+          EOF
+
+          echo "Duration: ${DURATION}s, Frames: ${FRAMES}, Start: ${START}s"
+          cat props_${{ inputs.worker_id }}.json
+
       - name: Render vertical video with Remotion
         id: render
         run: |
-          PROPS=$(cat segments_${{ inputs.worker_id }}.json | jq -c .)
           npx remotion render src/remotion/index.ts ViralShort \
             "output_${{ inputs.worker_id }}.mp4" \
-            --props="$PROPS" \
+            --props="props_${{ inputs.worker_id }}.json" \
             --concurrency=8 \
             --timeout=180 \
             --pixel-format=yuv420p \
