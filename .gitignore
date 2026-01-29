@@ -7,9 +7,14 @@ dist/
 # Environment variables (SECURITY CRITICAL)
 .env
 .env.*
+# Exception: .env.example is safe to commit
+!.env.example
 
 # API Keys files (SECURITY CRITICAL)
+# Ignore config/keys/ folder, but allow .example files
 config/keys/
+# Exception: Allow .example files in config/keys/
+!config/keys/*.example
 *.keys
 keys.txt
 

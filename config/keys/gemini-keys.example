@@ -1,0 +1,15 @@
+# Google Gemini API Keys for AI Analysis
+# Place one API key per line
+# Get your keys at: https://ai.google.dev
+#
+# Usage:
+# 1. Copy this file to gemini-keys.txt (remove .example)
+# 2. Add your API keys (one per line)
+# 3. The system will automatically rotate through keys using round-robin
+#
+# Example format:
+# AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# AIzaSyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+# AIzaSzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+# Add your Gemini API keys below (one per line):

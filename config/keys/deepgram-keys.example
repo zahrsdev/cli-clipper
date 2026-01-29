@@ -1,0 +1,15 @@
+# Deepgram API Keys for Speech-to-Text
+# Place one API key per line
+# Get your keys at: https://console.deepgram.com
+#
+# Usage:
+# 1. Copy this file to deepgram-keys.txt (remove .example)
+# 2. Add your API keys (one per line)
+# 3. The system will automatically rotate through keys using round-robin
+#
+# Example format:
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+# zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+
+# Add your Deepgram API keys below (one per line):
