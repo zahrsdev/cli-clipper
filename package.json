@@ -12,7 +12,8 @@
     "dev": "tsc && node dist/cli/index.js",
     "start": "node dist/cli/index.js",
     "remotion:studio": "npx remotion studio",
-    "remotion:render": "npx remotion render src/remotion/index.ts ViralShort"
+    "remotion:render": "npx remotion render src/remotion/index.ts ViralShort",
+    "check-secrets": "node scripts/check-secrets.js"
   },
   "keywords": ["cli", "youtube", "video", "shorts", "9:16"],
   "author": "",

@@ -24,11 +24,18 @@ npm install
 
 ### 2. Get API Keys
 
+> **Detailed Setup Guide**: See [docs/GITHUB_SECRETS_SETUP.md](docs/GITHUB_SECRETS_SETUP.md) for step-by-step instructions with screenshots and troubleshooting.
+
 | Service | Link | Purpose |
 |---------|------|---------|
 | Deepgram | https://console.deepgram.com | Speech-to-text transcription |
 | Gemini | https://ai.google.dev | Viral moment analysis |
-| GitHub PAT | https://github.com/settings/tokens | Trigger workflows |
+| GitHub PAT | https://github.com/settings/tokens | Trigger workflows (needs: `repo`, `workflow` scopes) |
+
+**Quick verification** (after setting up your .env):
+```bash
+npm run check-secrets
+```
 
 ### 3. Set Up Telegram Bot (Optional)
 
@@ -56,12 +63,18 @@ git push origin main
 
 ### 6. Add GitHub Secrets
 
-Go to your repository Settings → Secrets and variables → Actions:
+Go to your repository Settings → Secrets and variables → Actions, then add:
 
-- `DEEPGRAM_API_KEY`
-- `GEMINI_API_KEY`
-- `TELEGRAM_TOKEN` (optional)
-- `CHAT_ID` (optional)
+**Required Secrets:**
+- `DEEPGRAM_API_KEY` - From [Deepgram Console](https://console.deepgram.com)
+- `GEMINI_API_KEY` - From [Google AI Studio](https://ai.google.dev)
+- `GH_PAT` - From [GitHub Token Settings](https://github.com/settings/tokens) (needs `repo` and `workflow` scopes)
+
+**Optional Secrets** (for Telegram delivery):
+- `TELEGRAM_TOKEN` - From [@BotFather](https://t.me/BotFather) on Telegram
+- `CHAT_ID` - From [@userinfobot](https://t.me/userinfobot) on Telegram
+
+> Need help? See the complete [GitHub Secrets Setup Guide](docs/GITHUB_SECRETS_SETUP.md) for detailed instructions, screenshots, and troubleshooting.
 
 ## Usage
 
@@ -97,10 +110,15 @@ clipper-cli/
 │   ├── core/          # Business logic (ClipperService)
 │   ├── remotion/      # Video rendering components
 │   └── types/         # TypeScript definitions
-├── scripts/           # AI processing scripts
+├── scripts/           # AI processing scripts & utilities
+│   ├── transcribe.js  # Deepgram transcription
+│   ├── analyze-viral.js # Gemini viral analysis
+│   ├── send-telegram.js # Telegram delivery
+│   └── check-secrets.js # Secrets verification
 ├── .github/
 │   └── workflows/     # GitHub Actions workflows
 └── docs/
+    ├── GITHUB_SECRETS_SETUP.md # Complete secrets guide
     └── plans/         # Implementation plans
 ```
 
@@ -152,21 +170,42 @@ clipper-cli/
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GITHUB_OWNER` | Yes | GitHub username or org |
-| `GITHUB_REPO` | Yes | Repository name |
-| `GH_PAT` | Yes | GitHub Personal Access Token |
-| `DEEPGRAM_API_KEY` | Yes | Deepgram API key |
-| `GEMINI_API_KEY` | Yes | Google Gemini API key |
-| `TELEGRAM_TOKEN` | No | Telegram bot token |
-| `CHAT_ID` | No | Your Telegram chat ID |
+| Variable | Required | Description | How to Get |
+|----------|----------|-------------|------------|
+| `GITHUB_OWNER` | Yes | Your GitHub username or organization | Your GitHub profile |
+| `GITHUB_REPO` | Yes | Your repository name | Your repository name |
+| `GH_PAT` | Yes | GitHub Personal Access Token | [Create Token](https://github.com/settings/tokens) |
+| `DEEPGRAM_API_KEY` | Yes | Deepgram API key for transcription | [Get Free Key](https://console.deepgram.com) |
+| `GEMINI_API_KEY` | Yes | Google Gemini API key for viral analysis | [Get Free Key](https://ai.google.dev) |
+| `TELEGRAM_TOKEN` | No | Telegram bot token for video delivery | [@BotFather](https://t.me/BotFather) |
+| `CHAT_ID` | No | Your Telegram chat ID | [@userinfobot](https://t.me/userinfobot) |
+
+> **API Key Rotation**: This project supports multiple API keys with automatic rotation. See `.env.example` for details on setting up key files in `config/keys/`.
+
+### Verify Your Setup
+
+Before pushing to GitHub, verify your local environment:
+
+```bash
+npm run check-secrets
+```
+
+This will check that all required variables are set and test each API key.
 
 ## Troubleshooting
 
 ### Workflow not triggering
 
 Check your GitHub PAT has `repo` and `workflow` scopes.
+
+### API key issues
+
+Run the secrets checker:
+```bash
+npm run check-secrets
+```
+
+For detailed troubleshooting, see the [GitHub Secrets Setup Guide](docs/GITHUB_SECRETS_SETUP.md#troubleshooting).
 
 ### Render timeout
 
