@@ -61,4 +61,8 @@ export class GitHubAdapter {
       url: run.html_url
     };
   }
+
+  getWorkflowUrl(): string {
+    return `https://github.com/${this.owner}/${this.repo}/actions`;
+  }
 }
