@@ -108,21 +108,27 @@ clipper-cli/
 
 ```
 ┌─────────────┐      ┌──────────────┐      ┌─────────────┐
-│   CLI       │─────▶│ GitHub       │─────▶│ Deepgram    │
-│   (Local)   │      │ Actions      │     │ (Transcribe)│
+│   CLI       │─────▶│ GitHub       │─────▶│   yt-dlp    │
+│  (Local)    │      │   Actions    │      │  (Download) │
 └─────────────┘      └──────────────┘      └─────────────┘
                             │
                             ▼
                       ┌──────────────┐      ┌─────────────┐
-                      │ Remotion     │─────▶│ Gemini      │
-                      │ (Render)     │      │ (Analysis)  │
+                      │  FFmpeg      │─────▶│  Deepgram   │
+                      │(Audio Extract)│     │(Transcribe) │
                       └──────────────┘      └─────────────┘
                             │
                             ▼
-                      ┌──────────────┐
-                      │ Telegram     │
-                      │ (Delivery)   │
-                      └──────────────┘
+                      ┌──────────────┐      ┌─────────────┐
+                      │   Gemini     │─────▶│  Remotion   │
+                      │(Viral Analysis)│    │  (Render)   │
+                      └──────────────┘      └─────────────┘
+                                                  │
+                                                  ▼
+                                            ┌──────────────┐
+                                            │  Telegram    │
+                                            │  (Delivery)  │
+                                            └──────────────┘
 ```
 
 ## How It Works
