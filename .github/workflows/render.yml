@@ -1,4 +1,4 @@
-name: Clipper Render ${{ inputs.worker_id }}
+name: Clipper Render
 
 on:
   workflow_dispatch:
