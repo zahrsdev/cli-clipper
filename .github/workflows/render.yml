@@ -62,14 +62,14 @@ jobs:
         run: |
           node scripts/transcribe.js "audio_${{ inputs.worker_id }}.wav" > "transcript_${{ inputs.worker_id }}.json"
         env:
-          DEEPGRAM_KEY: ${{ secrets.DEEPGRAM_KEY }}
+          DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
 
       - name: Analyze viral moments with Gemini
         id: analyze
         run: |
           node scripts/analyze-viral.js "transcript_${{ inputs.worker_id }}.json" > "segments_${{ inputs.worker_id }}.json"
         env:
-          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Render vertical video with Remotion
         id: render
@@ -83,6 +83,14 @@ jobs:
             --pixel-format=yuv420p \
             --crf=23 \
             --overwrite
+
+      - name: Upload output video as artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: clipper-output-${{ inputs.worker_id }}
+          path: output_${{ inputs.worker_id }}.mp4
+          retention-days: 7
 
       - name: Send to Telegram
         id: telegram
@@ -101,9 +109,8 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
 
-      - name: Cleanup
+      - name: Cleanup intermediate files
         if: always()
         run: |
           rm -f video_${{ inputs.worker_id }}.* audio_${{ inputs.worker_id }}.*
           rm -f transcript_${{ inputs.worker_id }}.* segments_${{ inputs.worker_id }}.*
-          rm -f output_${{ inputs.worker_id }}.*
