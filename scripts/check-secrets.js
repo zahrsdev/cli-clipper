@@ -118,8 +118,11 @@ const requiredSecrets = [
       if (!value) {
         return { valid: false, message: 'Missing' };
       }
-      if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value)) {
-        return { valid: false, message: 'Invalid format (expected UUID format)' };
+      // Deepgram keys are either UUID format or 40-char hex string
+      const isValidFormat = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value) ||
+                            /^[a-f0-9]{40}$/i.test(value);
+      if (!isValidFormat) {
+        return { valid: false, message: 'Invalid format (expected UUID or 40-char hex)' };
       }
       return { valid: true, canTest: true };
     },
